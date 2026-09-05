@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Grace Ministry Hub"
+description = "A ministry operations workspace for churches to organize volunteers, prepare weekly services, draft announcements and social posts, and get more done with Grace's assistance."
+version = "1.0.0"
+id = "artifacts/grace-ministry-hub"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22087
+
+[services.development]
+run = "pnpm --filter @workspace/grace-ministry-hub run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/grace-ministry-hub", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/grace-ministry-hub/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22087"
+BASE_PATH = "/"

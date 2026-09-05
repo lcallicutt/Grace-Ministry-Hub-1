@@ -10,6 +10,14 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: dashboard
+    description: Ministry workspace overview
+  - name: profile
+    description: Church profile operations
+  - name: conversations
+    description: Grace conversations and assistant messages
+  - name: services
+    description: Weekly service builder operations
 paths:
   /healthz:
     get:
@@ -24,7 +32,176 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [dashboard]
+      summary: Get the ministry workspace overview
+      responses:
+        "200":
+          description: Dashboard overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+  /church-profile:
+    get:
+      operationId: getChurchProfile
+      tags: [profile]
+      summary: Get the church profile
+      responses:
+        "200":
+          description: Church profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChurchProfile"
+    patch:
+      operationId: updateChurchProfile
+      tags: [profile]
+      summary: Update the church profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChurchProfileUpdate"
+      responses:
+        "200":
+          description: Updated church profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChurchProfile"
+  /conversations:
+    get:
+      operationId: getConversations
+      tags: [conversations]
+      summary: List recent conversations
+      responses:
+        "200":
+          description: Recent conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Conversation"
+    post:
+      operationId: createConversation
+      tags: [conversations]
+      summary: Start a new conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConversationInput"
+      responses:
+        "201":
+          description: Created conversation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conversation"
+  /conversations/{conversationId}:
+    get:
+      operationId: getConversation
+      tags: [conversations]
+      summary: Get a conversation with its messages
+      parameters:
+        - $ref: "#/components/parameters/ConversationId"
+      responses:
+        "200":
+          description: Conversation detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationDetail"
+        "404":
+          description: Conversation not found
+    post:
+      operationId: sendConversationMessage
+      tags: [conversations]
+      summary: Send a message to Grace
+      parameters:
+        - $ref: "#/components/parameters/ConversationId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MessageInput"
+      responses:
+        "200":
+          description: User and assistant messages
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessagePair"
+        "404":
+          description: Conversation not found
+  /service-plans:
+    get:
+      operationId: getServicePlans
+      tags: [services]
+      summary: List saved weekly service plans
+      responses:
+        "200":
+          description: Saved service plans
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ServicePlan"
+    post:
+      operationId: createServicePlan
+      tags: [services]
+      summary: Create a weekly service plan and its outputs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServicePlanInput"
+      responses:
+        "201":
+          description: Created service plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServicePlanDetail"
+  /service-plans/{servicePlanId}:
+    get:
+      operationId: getServicePlan
+      tags: [services]
+      summary: Get a weekly service plan and generated outputs
+      parameters:
+        - $ref: "#/components/parameters/ServicePlanId"
+      responses:
+        "200":
+          description: Service plan detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServicePlanDetail"
+        "404":
+          description: Service plan not found
 components:
+  parameters:
+    ConversationId:
+      name: conversationId
+      in: path
+      required: true
+      schema:
+        type: integer
+    ServicePlanId:
+      name: servicePlanId
+      in: path
+      required: true
+      schema:
+        type: integer
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +210,168 @@ components:
           type: string
       required:
         - status
+    Dashboard:
+      type: object
+      required: [church, conversationCount, servicePlanCount, nextService, recentConversations]
+      properties:
+        church:
+          type: string
+        conversationCount:
+          type: integer
+        servicePlanCount:
+          type: integer
+        nextService:
+          type: ["string", "null"]
+        recentConversations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Conversation"
+    ChurchProfile:
+      type: object
+      required: [id, churchName, pastorName, address, serviceTime, welcomeNote, updatedAt]
+      properties:
+        id:
+          type: integer
+        churchName:
+          type: string
+        pastorName:
+          type: string
+        address:
+          type: string
+        serviceTime:
+          type: string
+        welcomeNote:
+          type: string
+        updatedAt:
+          type: string
+    ChurchProfileUpdate:
+      type: object
+      properties:
+        churchName:
+          type: string
+        pastorName:
+          type: string
+        address:
+          type: string
+        serviceTime:
+          type: string
+        welcomeNote:
+          type: string
+    Conversation:
+      type: object
+      required: [id, title, preview, category, createdAt, updatedAt, messageCount]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        preview:
+          type: string
+        category:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        messageCount:
+          type: integer
+    ConversationInput:
+      type: object
+      required: [title, category]
+      properties:
+        title:
+          type: string
+          minLength: 1
+        category:
+          type: string
+    ConversationDetail:
+      allOf:
+        - $ref: "#/components/schemas/Conversation"
+        - type: object
+          required: [messages]
+          properties:
+            messages:
+              type: array
+              items:
+                $ref: "#/components/schemas/Message"
+    Message:
+      type: object
+      required: [id, role, content, createdAt]
+      properties:
+        id:
+          type: integer
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+        createdAt:
+          type: string
+    MessageInput:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          minLength: 1
+    MessagePair:
+      type: object
+      required: [userMessage, assistantMessage]
+      properties:
+        userMessage:
+          $ref: "#/components/schemas/Message"
+        assistantMessage:
+          $ref: "#/components/schemas/Message"
+    ServicePlan:
+      type: object
+      required: [id, churchName, serviceDate, serviceTime, sermonTitle, speaker, createdAt]
+      properties:
+        id:
+          type: integer
+        churchName:
+          type: string
+        serviceDate:
+          type: string
+        serviceTime:
+          type: string
+        sermonTitle:
+          type: string
+        speaker:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+    ServicePlanInput:
+      type: object
+      required: [churchName, serviceDate, serviceTime, sermonTitle]
+      properties:
+        churchName:
+          type: string
+        serviceDate:
+          type: string
+        serviceTime:
+          type: string
+        sermonTitle:
+          type: string
+        speaker:
+          type: ["string", "null"]
+        orderOfService:
+          type: ["string", "null"]
+        announcements:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+    ServicePlanDetail:
+      allOf:
+        - $ref: "#/components/schemas/ServicePlan"
+        - $ref: "#/components/schemas/ServiceOutputs"
+    ServiceOutputs:
+      type: object
+      required: [bulletin, projection, announcerSheet]
+      properties:
+        bulletin:
+          type: string
+        projection:
+          type: string
+        announcerSheet:
+          type: string
 
