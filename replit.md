@@ -1,6 +1,6 @@
-# [Project name]
+# Grace Ministry Hub
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A ministry operations workspace that helps church teams prepare services, coordinate volunteers, and create communication materials with Grace.
 
 ## Run & Operate
 
@@ -22,15 +22,23 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/grace-ministry-hub` — responsive React web app
+- `artifacts/api-server/src/routes/ministry.ts` — ministry API behavior and document generation
+- `lib/api-spec/openapi.yaml` — API contract and generated client source of truth
+- `lib/db/src/schema` — church profiles, conversations, messages, and service plans
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- The first version is a single-church workspace; church details are reusable defaults across the app.
+- Service builder outputs are generated and stored together so a saved plan always preserves its bulletin, projection content, and announcer sheet.
+- Grace conversations are persisted as conversation and message records.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Grace workspace with ministry-specific quick prompts and saved conversations
+- Weekly service builder with bulletin, projection, and announcer-sheet output
+- Church profile for reusable church and service details
+- Responsive navigation for desktop and mobile church staff
 
 ## User preferences
 
