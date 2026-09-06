@@ -1,5 +1,4 @@
 import * as React from "react"
-import { Cross2Icon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 

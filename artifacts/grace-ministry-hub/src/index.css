@@ -60,85 +60,77 @@
   --app-font-mono: Menlo, monospace;
   --radius: 0.75rem;
 
-  /* Warm cream background */
-  --background: 40 33% 97%;
-  /* Deep slate/navy text */
-  --foreground: 210 30% 18%;
+  /* Grace navy, teal, and gold */
+  --background: 42 35% 97%;
+  --foreground: 212 69% 20%;
   
-  /* Slightly lighter cream for cards */
-  --card: 40 33% 99%;
-  --card-foreground: 210 30% 18%;
-  --card-border: 40 20% 90%;
+  --card: 0 0% 100%;
+  --card-foreground: 212 69% 20%;
+  --card-border: 207 23% 86%;
 
-  --popover: 40 33% 99%;
-  --popover-foreground: 210 30% 18%;
-  --popover-border: 40 20% 90%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 212 69% 20%;
+  --popover-border: 207 23% 86%;
 
-  /* Deep Pine Green */
-  --primary: 160 40% 28%;
-  --primary-foreground: 40 33% 98%;
+  --primary: 212 74% 26%;
+  --primary-foreground: 0 0% 100%;
 
-  /* Warm Terracotta */
-  --secondary: 25 60% 50%;
-  --secondary-foreground: 40 33% 98%;
+  --secondary: 185 67% 30%;
+  --secondary-foreground: 0 0% 100%;
 
-  /* Soft warm grey */
-  --muted: 40 15% 90%;
-  --muted-foreground: 210 15% 45%;
+  --muted: 202 24% 92%;
+  --muted-foreground: 210 20% 40%;
 
-  /* Subtle gold accent */
-  --accent: 40 40% 85%;
-  --accent-foreground: 210 30% 18%;
+  --accent: 42 76% 84%;
+  --accent-foreground: 212 69% 20%;
 
   --destructive: 0 70% 50%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: 40 15% 85%;
-  --input: 40 15% 85%;
-  --ring: 160 40% 28%;
+  --border: 207 23% 82%;
+  --input: 207 23% 82%;
+  --ring: 185 67% 30%;
 
-  /* Deep Pine Green Sidebar */
-  --sidebar: 160 45% 18%;
-  --sidebar-foreground: 40 33% 96%;
-  --sidebar-border: 160 40% 15%;
-  --sidebar-primary: 160 50% 28%;
-  --sidebar-primary-foreground: 40 33% 98%;
-  --sidebar-accent: 160 40% 24%;
-  --sidebar-accent-foreground: 40 33% 98%;
-  --sidebar-ring: 160 50% 40%;
+  --sidebar: 212 74% 20%;
+  --sidebar-foreground: 202 33% 96%;
+  --sidebar-border: 211 55% 29%;
+  --sidebar-primary: 42 78% 56%;
+  --sidebar-primary-foreground: 212 74% 18%;
+  --sidebar-accent: 185 67% 30%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-ring: 42 78% 56%;
 }
 
 .dark {
-  /* No dark mode needed per requirements unless requested, but putting placeholders */
-  --background: 210 30% 12%;
-  --foreground: 40 33% 96%;
-  --card: 210 30% 15%;
-  --card-foreground: 40 33% 96%;
-  --card-border: 210 20% 25%;
-  --popover: 210 30% 15%;
-  --popover-foreground: 40 33% 96%;
-  --popover-border: 210 20% 25%;
-  --primary: 160 40% 40%;
-  --primary-foreground: 210 30% 12%;
-  --secondary: 25 60% 50%;
-  --secondary-foreground: 40 33% 98%;
-  --muted: 210 20% 20%;
-  --muted-foreground: 40 15% 70%;
-  --accent: 210 20% 25%;
-  --accent-foreground: 40 33% 96%;
+  --background: 212 62% 10%;
+  --foreground: 202 33% 96%;
+  --card: 212 55% 14%;
+  --card-foreground: 202 33% 96%;
+  --card-border: 211 38% 25%;
+  --popover: 212 55% 14%;
+  --popover-foreground: 202 33% 96%;
+  --popover-border: 211 38% 25%;
+  --primary: 185 58% 45%;
+  --primary-foreground: 212 74% 12%;
+  --secondary: 42 78% 56%;
+  --secondary-foreground: 212 74% 18%;
+  --muted: 211 37% 20%;
+  --muted-foreground: 203 18% 72%;
+  --accent: 211 37% 24%;
+  --accent-foreground: 42 76% 84%;
   --destructive: 0 60% 50%;
   --destructive-foreground: 0 0% 100%;
   --border: 210 20% 25%;
   --input: 210 20% 25%;
-  --ring: 160 40% 40%;
-  --sidebar: 210 30% 10%;
-  --sidebar-foreground: 40 33% 96%;
-  --sidebar-border: 210 20% 15%;
-  --sidebar-primary: 160 40% 40%;
-  --sidebar-primary-foreground: 210 30% 12%;
-  --sidebar-accent: 210 20% 18%;
-  --sidebar-accent-foreground: 40 33% 96%;
-  --sidebar-ring: 160 40% 40%;
+  --ring: 42 78% 56%;
+  --sidebar: 212 74% 8%;
+  --sidebar-foreground: 202 33% 96%;
+  --sidebar-border: 211 38% 20%;
+  --sidebar-primary: 42 78% 56%;
+  --sidebar-primary-foreground: 212 74% 12%;
+  --sidebar-accent: 185 55% 28%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-ring: 42 78% 56%;
 }
 
 @layer base {
