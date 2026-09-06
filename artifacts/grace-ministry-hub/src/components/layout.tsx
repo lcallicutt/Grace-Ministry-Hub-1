@@ -1,19 +1,17 @@
 import { Link, useLocation } from "wouter";
 import { MessageSquare, LayoutList, Building2, PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useGetChurchProfile } from "@workspace/api-client-react";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
+  const [desktopNavigationExpanded, setDesktopNavigationExpanded] = useState(true);
   const isMobile = useIsMobile();
   const { data: profile } = useGetChurchProfile();
-
-  useEffect(() => {
-    if (isMobile) setSidebarOpen(false);
-  }, [isMobile]);
+  const sidebarOpen = isMobile ? mobileNavigationOpen : desktopNavigationExpanded;
 
   const navItems = [
     { href: "/", label: "Workspace", icon: MessageSquare },
@@ -28,11 +26,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
           type="button"
           aria-label="Close navigation"
           className="fixed inset-0 z-20 bg-foreground/35"
-          onClick={() => setSidebarOpen(false)}
+          onClick={() => setMobileNavigationOpen(false)}
         />
       )}
       {/* Sidebar */}
       <aside
+        aria-label="Primary navigation"
         className={cn(
           "fixed inset-y-0 left-0 z-30 md:relative overflow-hidden bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-300 ease-in-out flex flex-col",
           sidebarOpen ? "w-64" : "w-0 md:w-16"
@@ -50,7 +49,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </span>
           </div>
           <button 
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={() => setDesktopNavigationExpanded((expanded) => !expanded)}
             aria-label={sidebarOpen ? "Collapse navigation" : "Expand navigation"}
             className="text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors hidden md:block shrink-0"
           >
@@ -65,7 +64,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             return (
               <Link key={item.href} href={item.href} className="block">
                 <div
-                  onClick={() => isMobile && setSidebarOpen(false)}
+                  onClick={() => isMobile && setMobileNavigationOpen(false)}
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group relative cursor-pointer",
                     isActive 
@@ -101,8 +100,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <main className="flex-1 flex flex-col min-w-0 bg-background overflow-hidden relative">
         <header className="h-16 md:hidden flex items-center px-4 border-b bg-background/80 backdrop-blur-sm z-10 shrink-0">
           <button 
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={() => setMobileNavigationOpen(true)}
             aria-label="Open navigation"
+            aria-expanded={mobileNavigationOpen}
             className="text-foreground/70 hover:text-foreground"
           >
             <PanelLeftOpen size={24} />
