@@ -1,0 +1,1 @@
+- [Pilot access rollout](pilot-access-rollout.md) — Launch begins as a manually controlled 30-day free pilot; authentication and payments come afterward.
