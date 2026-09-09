@@ -26,7 +26,10 @@ import {
   UpdateChurchProfileBody,
   UpdateChurchProfileResponse,
 } from "@workspace/api-zod";
-import { generateClaudeText } from "../lib/claude";
+import {
+  ClaudeRateLimitError,
+  generateClaudeText,
+} from "../lib/claude";
 
 const router: IRouter = Router();
 
@@ -93,6 +96,7 @@ async function assistantReply(options: {
   content: string;
 }): Promise<string> {
   return generateClaudeText({
+    workspaceId: options.church.id,
     system: `You are Grace, the ministry assistant for ${options.church.churchName}.
 
 Church context:
@@ -110,6 +114,7 @@ Help church staff reduce manual work. Create polished, immediately usable volunt
 }
 
 async function createServiceOutputs(data: {
+  workspaceId: number;
   churchName: string;
   serviceDate: string;
   serviceTime: string;
@@ -124,6 +129,7 @@ async function createServiceOutputs(data: {
   announcerSheet: string;
 }> {
   const result = await generateClaudeText({
+    workspaceId: data.workspaceId,
     system: `You are Grace, an expert church service communications assistant. Create three polished, ready-to-use documents from the supplied service details.
 
 Return ONLY valid JSON with exactly these string fields:
@@ -133,7 +139,16 @@ The bulletin should be welcoming and print-ready. Projection content should use 
     messages: [
       {
         role: "user",
-        content: JSON.stringify(data),
+        content: JSON.stringify({
+          churchName: data.churchName,
+          serviceDate: data.serviceDate,
+          serviceTime: data.serviceTime,
+          sermonTitle: data.sermonTitle,
+          speaker: data.speaker,
+          orderOfService: data.orderOfService,
+          announcements: data.announcements,
+          notes: data.notes,
+        }),
       },
     ],
   });
@@ -320,6 +335,11 @@ router.post(
         content: body.data.content,
       });
     } catch (error) {
+      if (error instanceof ClaudeRateLimitError) {
+        res.set("Retry-After", String(error.retryAfterSeconds));
+        res.status(429).json({ error: error.message });
+        return;
+      }
       req.log.error({ err: error }, "Claude chat generation failed");
       res.status(502).json({
         error:
@@ -380,8 +400,17 @@ router.post("/service-plans", async (req, res): Promise<void> => {
 
   let outputs: Awaited<ReturnType<typeof createServiceOutputs>>;
   try {
-    outputs = await createServiceOutputs(parsed.data);
+    const profile = await ensureChurchProfile();
+    outputs = await createServiceOutputs({
+      workspaceId: profile.id,
+      ...parsed.data,
+    });
   } catch (error) {
+    if (error instanceof ClaudeRateLimitError) {
+      res.set("Retry-After", String(error.retryAfterSeconds));
+      res.status(429).json({ error: error.message });
+      return;
+    }
     req.log.error({ err: error }, "Claude service generation failed");
     res.status(502).json({
       error:
