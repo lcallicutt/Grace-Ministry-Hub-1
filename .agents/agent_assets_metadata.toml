@@ -1,0 +1,9 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "fzzX3W58exS8EIB49zFQ2"
+uri = "file://artifacts/grace-ministry-hub-video/public/audio/bg_music.mp3"
+type = "audio"
+title = "background music"
+description = "Generated music: Warm cinematic uplifting instrumental background music scoring a mission-driven church staff productivity product film. Gentle piano, soft strings, subtle hand percussion, warm bass,…"

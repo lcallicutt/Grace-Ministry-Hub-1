@@ -1,26 +1,25 @@
 @import 'tailwindcss';
 
-/* REPLACE THESE -- define your own palette and fonts for each video */
 :root {
-  --color-primary: #000000;
-  --color-secondary: #6b7280;
-  --color-accent: #3b82f6;
+  --color-primary: #114574;
+  --color-secondary: #197780;
+  --color-accent: #e6b738;
 
-  --color-bg-light: #ffffff;
-  --color-bg-dark: #0f172a;
-  --color-bg-muted: #f8fafc;
+  --color-bg-light: #faf9f5;
+  --color-bg-dark: #102f56;
+  --color-bg-muted: #eef2f3;
 
-  --color-text-primary: #111827;
-  --color-text-secondary: #6b7280;
-  --color-text-muted: #9ca3af;
-  --color-text-inverse: #ffffff;
+  --color-text-primary: #102f56;
+  --color-text-secondary: #114574;
+  --color-text-muted: #5b6c7c;
+  --color-text-inverse: #faf9f5;
 
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
 
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Outfit', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
@@ -41,6 +40,14 @@
   --font-display: var(--font-display);
   --font-body: var(--font-body);
   --font-mono: var(--font-mono);
+  --font-serif: var(--font-display);
+  --font-sans: var(--font-body);
+  --color-cream: #faf9f5;
+  --color-deepNavy: #102f56;
+  --color-primaryNavy: #114574;
+  --color-teal: #197780;
+  --color-gold: #e6b738;
+  --color-border: #d3dde1;
 }
 
 body {

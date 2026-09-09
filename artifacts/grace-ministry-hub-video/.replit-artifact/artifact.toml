@@ -1,4 +1,5 @@
 kind = "video"
+videoAspectRatio = "16:9"
 previewPath = "/grace-video/"
 title = "Grace Ministry Hub — Animated Promo"
 description = "A 45–60 second animated promotional video showing how Grace Ministry Hub helps church teams move from scattered weekly work to prepared services, coordinated volunteers, and ready-to-use communications."
