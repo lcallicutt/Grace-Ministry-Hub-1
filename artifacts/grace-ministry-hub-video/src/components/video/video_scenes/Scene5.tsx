@@ -36,7 +36,7 @@ export function Scene5() {
           <img 
             src={graceLogo}
             alt="Grace Ministry Hub Logo"
-            className="h-40 object-contain mb-8 filter drop-shadow-2xl brightness-0 invert" 
+            className="h-40 object-contain mb-8 mix-blend-screen grayscale invert contrast-200" 
           />
           
           <h1 className={`${typography.h1} text-cream mb-6`}>
