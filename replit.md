@@ -10,6 +10,7 @@ A ministry operations workspace that helps church teams prepare services, coordi
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 - Required env: `DATABASE_URL` — Postgres connection string
+- Required secret: `Grace_Pilot_GEC` — Anthropic API key used server-side for Grace responses
 
 ## Stack
 
@@ -32,6 +33,7 @@ A ministry operations workspace that helps church teams prepare services, coordi
 - The first version is a single-church workspace; church details are reusable defaults across the app.
 - Service builder outputs are generated and stored together so a saved plan always preserves its bulletin, projection content, and announcer sheet.
 - Grace conversations are persisted as conversation and message records.
+- Grace chat and weekly service documents are generated with Claude through Anthropic's server-side Messages API.
 
 ## Product
 

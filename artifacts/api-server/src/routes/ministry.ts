@@ -26,6 +26,7 @@ import {
   UpdateChurchProfileBody,
   UpdateChurchProfileResponse,
 } from "@workspace/api-zod";
+import { generateClaudeText } from "../lib/claude";
 
 const router: IRouter = Router();
 
@@ -86,29 +87,29 @@ function serviceSummary(plan: typeof servicePlansTable.$inferSelect) {
   };
 }
 
-function assistantReply(content: string, churchName: string): string {
-  const normalized = content.toLowerCase();
+async function assistantReply(options: {
+  church: typeof churchProfilesTable.$inferSelect;
+  history: Array<{ role: "user" | "assistant"; content: string }>;
+  content: string;
+}): Promise<string> {
+  return generateClaudeText({
+    system: `You are Grace, the ministry assistant for ${options.church.churchName}.
 
-  if (normalized.includes("greeter") || normalized.includes("volunteer")) {
-    return `Here is a ready-to-use volunteer plan for ${churchName}:\n\nMAIN ENTRANCE\n• Lead greeter: Assign one experienced volunteer\n• Welcome team: Assign two volunteers\n\nSIDE ENTRANCE\n• Greeter: Assign one volunteer\n\nWELCOME DESK\n• Host: Assign one volunteer\n\nNEXT STEP\nSend each person a confirmation with arrival time, dress expectations, and who to contact if plans change. You can paste the names here and I will turn this into individual messages.`;
-  }
+Church context:
+- Pastor: ${options.church.pastorName || "Not provided"}
+- Address: ${options.church.address || "Not provided"}
+- Regular service: ${options.church.serviceTime || "Not provided"}
+- Welcome tone: ${options.church.welcomeNote || "Warm and welcoming"}
 
-  if (normalized.includes("social") || normalized.includes("canva")) {
-    return `CANVA-READY CREATIVE BRIEF\n\nChurch: ${churchName}\nFormat: 1080 × 1080 social post\nHeadline: You are welcome here\nSupporting copy: Join us this Sunday for worship, encouragement, and community.\nVisual direction: Warm gathering, natural light, genuine people, generous space for the service time.\nCall to action: Plan your visit\n\nCAPTION\nThere is a place for you this Sunday. Join us for worship and a message of hope. We would love to welcome you.`;
-  }
-
-  if (normalized.includes("announcement")) {
-    return `Here are three versions for ${churchName}:\n\nBULLETIN\nJoin us for our upcoming church event. Everyone is welcome, and no registration is required unless noted.\n\nSTAGE ANNOUNCEMENT\nWe would love for you to be part of what is happening next at our church. Check the bulletin for details and invite someone to join you.\n\nSOCIAL CAPTION\nSomething meaningful is coming up at ${churchName}. Save the date, bring a friend, and join us.`;
-  }
-
-  if (normalized.includes("event")) {
-    return `EVENT PLANNING STARTER\n\n1. Confirm the purpose, date, time, location, and ministry owner.\n2. Assign hospitality, setup, check-in, program, and cleanup leads.\n3. Draft one clear invitation for the bulletin, stage, email, and social channels.\n4. Set volunteer confirmation and final headcount deadlines.\n5. Prepare a day-of run sheet with arrival times and contact details.\n\nShare the event details and I will fill this in for ${churchName}.`;
-  }
-
-  return `I can help ${churchName} turn that into something ready to use. Tell me the audience, date or deadline, and the desired output—volunteer plan, announcement, social caption, event checklist, email, or Canva-ready brief—and I will draft it.`;
+Help church staff reduce manual work. Create polished, immediately usable volunteer schedules, announcements, social posts, event plans, emails, service content, and Canva-ready creative briefs. Be warm, capable, concise, and practical. Preserve names, dates, times, locations, and counts exactly as supplied. Never invent missing facts; ask a short clarifying question when essential information is missing. Do not claim to have contacted volunteers, posted content, or completed actions outside this app.`,
+    messages: [
+      ...options.history,
+      { role: "user", content: options.content },
+    ],
+  });
 }
 
-function createServiceOutputs(data: {
+async function createServiceOutputs(data: {
   churchName: string;
   serviceDate: string;
   serviceTime: string;
@@ -117,18 +118,48 @@ function createServiceOutputs(data: {
   orderOfService?: string | null;
   announcements?: string | null;
   notes?: string | null;
-}) {
-  const speaker = data.speaker?.trim() || "Speaker to be announced";
-  const order =
-    data.orderOfService?.trim() ||
-    "Welcome\nWorship\nPrayer\nMessage\nClosing";
-  const announcements =
-    data.announcements?.trim() || "No additional announcements this week.";
+}): Promise<{
+  bulletin: string;
+  projection: string;
+  announcerSheet: string;
+}> {
+  const result = await generateClaudeText({
+    system: `You are Grace, an expert church service communications assistant. Create three polished, ready-to-use documents from the supplied service details.
+
+Return ONLY valid JSON with exactly these string fields:
+{"bulletin":"...","projection":"...","announcerSheet":"..."}
+
+The bulletin should be welcoming and print-ready. Projection content should use short, readable slide sections. The announcer sheet should be natural to read aloud with clear cues. Preserve all supplied facts exactly. Do not invent events, names, dates, scripture, or logistics. If an optional field is absent, omit that material gracefully.`,
+    messages: [
+      {
+        role: "user",
+        content: JSON.stringify(data),
+      },
+    ],
+  });
+
+  const cleaned = result
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/, "")
+    .trim();
+  const parsed = JSON.parse(cleaned) as Partial<{
+    bulletin: string;
+    projection: string;
+    announcerSheet: string;
+  }>;
+
+  if (
+    typeof parsed.bulletin !== "string" ||
+    typeof parsed.projection !== "string" ||
+    typeof parsed.announcerSheet !== "string"
+  ) {
+    throw new Error("Claude returned incomplete service documents");
+  }
 
   return {
-    bulletin: `${data.churchName}\nWEEKLY SERVICE BULLETIN\n${data.serviceDate} • ${data.serviceTime}\n\nTODAY'S MESSAGE\n${data.sermonTitle}\n${speaker}\n\nORDER OF SERVICE\n${order}\n\nTHIS WEEK\n${announcements}\n\nWe are grateful you joined us today.`,
-    projection: `WELCOME TO ${data.churchName.toUpperCase()}\n${data.serviceDate} • ${data.serviceTime}\n\nTODAY'S MESSAGE\n${data.sermonTitle}\n${speaker}\n\nANNOUNCEMENTS\n${announcements}\n\nTHANK YOU FOR WORSHIPING WITH US`,
-    announcerSheet: `ANNOUNCER SHEET\n${data.churchName} • ${data.serviceDate}\n\nOPENING\nGood ${data.serviceTime.toLowerCase().includes("am") ? "morning" : "day"}, church family. Welcome to ${data.churchName}. We are glad you are here.\n\nMESSAGE\nToday's message is “${data.sermonTitle},” presented by ${speaker}.\n\nANNOUNCEMENTS\n${announcements}\n\nADDITIONAL NOTES\n${data.notes?.trim() || "No additional notes."}\n\nCLOSING\nThank you for being with us. Have a grace-filled week.`,
+    bulletin: parsed.bulletin,
+    projection: parsed.projection,
+    announcerSheet: parsed.announcerSheet,
   };
 }
 
@@ -273,7 +304,29 @@ router.post(
     }
 
     const profile = await ensureChurchProfile();
-    const response = assistantReply(body.data.content, profile.churchName);
+    const previousMessages = await db
+      .select()
+      .from(messagesTable)
+      .where(eq(messagesTable.conversationId, conversation.id))
+      .orderBy(messagesTable.createdAt);
+    let response: string;
+    try {
+      response = await assistantReply({
+        church: profile,
+        history: previousMessages.map((message) => ({
+          role: message.role,
+          content: message.content,
+        })),
+        content: body.data.content,
+      });
+    } catch (error) {
+      req.log.error({ err: error }, "Claude chat generation failed");
+      res.status(502).json({
+        error:
+          "Grace could not generate a response right now. Please try again.",
+      });
+      return;
+    }
     const [userMessage] = await db
       .insert(messagesTable)
       .values({
@@ -325,7 +378,17 @@ router.post("/service-plans", async (req, res): Promise<void> => {
     return;
   }
 
-  const outputs = createServiceOutputs(parsed.data);
+  let outputs: Awaited<ReturnType<typeof createServiceOutputs>>;
+  try {
+    outputs = await createServiceOutputs(parsed.data);
+  } catch (error) {
+    req.log.error({ err: error }, "Claude service generation failed");
+    res.status(502).json({
+      error:
+        "Grace could not prepare the service documents right now. Please try again.",
+    });
+    return;
+  }
   const [created] = await db
     .insert(servicePlansTable)
     .values({ ...parsed.data, ...outputs })
