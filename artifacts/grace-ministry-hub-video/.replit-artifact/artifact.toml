@@ -1,0 +1,28 @@
+kind = "video"
+previewPath = "/grace-video/"
+title = "Grace Ministry Hub — Animated Promo"
+description = "A 45–60 second animated promotional video showing how Grace Ministry Hub helps church teams move from scattered weekly work to prepared services, coordinated volunteers, and ready-to-use communications."
+version = "1.0.0"
+id = "artifacts/grace-ministry-hub-video"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/grace-video/" ]
+localPort = 18430
+
+[services.development]
+run = "pnpm --filter @workspace/grace-ministry-hub-video run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/grace-ministry-hub-video", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/grace-ministry-hub-video/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18430"
+BASE_PATH = "/grace-video/"
