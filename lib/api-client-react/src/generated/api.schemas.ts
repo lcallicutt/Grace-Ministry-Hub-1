@@ -5,6 +5,18 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export interface PilotAccessStatus {
+  authenticated: boolean;
+}
+
+export interface PilotAccessCredentials {
+  /**
+     * @minLength 1
+     * @maxLength 256
+     */
+  password: string;
+}
+
 export interface HealthStatus {
   status: string;
 }

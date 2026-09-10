@@ -29,6 +29,8 @@ import type {
   HealthStatus,
   MessageInput,
   MessagePair,
+  PilotAccessCredentials,
+  PilotAccessStatus,
   ServicePlan,
   ServicePlanDetail,
   ServicePlanInput
@@ -138,6 +140,225 @@ export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, 
 
 
 
+
+export const getGetPilotAccessStatusUrl = () => {
+
+
+
+
+  return `/api/pilot/status`
+}
+
+/**
+ * @summary Check pilot access
+ */
+export const getPilotAccessStatus = async ( options?: Parameters<typeof customFetch>[1]): Promise<PilotAccessStatus> => {
+
+  return customFetch<PilotAccessStatus>(getGetPilotAccessStatusUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPilotAccessStatusQueryKey = () => {
+    return [
+    `/api/pilot/status`
+    ] as const;
+    }
+
+
+export const getGetPilotAccessStatusQueryOptions = <TData = Awaited<ReturnType<typeof getPilotAccessStatus>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPilotAccessStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPilotAccessStatusQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPilotAccessStatus>>> = ({ signal }) => getPilotAccessStatus({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPilotAccessStatus>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetPilotAccessStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getPilotAccessStatus>>>
+export type GetPilotAccessStatusQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Check pilot access
+ */
+
+export function useGetPilotAccessStatus<TData = Awaited<ReturnType<typeof getPilotAccessStatus>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPilotAccessStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetPilotAccessStatusQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getStartPilotAccessUrl = () => {
+
+
+
+
+  return `/api/pilot/login`
+}
+
+/**
+ * @summary Unlock the private pilot
+ */
+export const startPilotAccess = async (pilotAccessCredentials: PilotAccessCredentials, options?: Parameters<typeof customFetch>[1]): Promise<PilotAccessStatus> => {
+
+  return customFetch<PilotAccessStatus>(getStartPilotAccessUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(pilotAccessCredentials)
+  }
+);}
+
+
+
+
+
+export const getStartPilotAccessMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof startPilotAccess>>, TError,{data: BodyType<PilotAccessCredentials>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof startPilotAccess>>, TError,{data: BodyType<PilotAccessCredentials>}, TContext> => {
+
+const mutationKey = ['startPilotAccess'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof startPilotAccess>>, {data: BodyType<PilotAccessCredentials>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  startPilotAccess(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type StartPilotAccessMutationResult = NonNullable<Awaited<ReturnType<typeof startPilotAccess>>>
+    export type StartPilotAccessMutationBody = BodyType<PilotAccessCredentials>
+    export type StartPilotAccessMutationError = ErrorType<void>
+
+    /**
+ * @summary Unlock the private pilot
+ */
+export const useStartPilotAccess = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof startPilotAccess>>, TError,{data: BodyType<PilotAccessCredentials>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof startPilotAccess>>,
+        TError,
+        {data: BodyType<PilotAccessCredentials>},
+        TContext
+      > => {
+      return useMutation(getStartPilotAccessMutationOptions(options));
+    }
+
+export const getEndPilotAccessUrl = () => {
+
+
+
+
+  return `/api/pilot/logout`
+}
+
+/**
+ * @summary End the current pilot session
+ */
+export const endPilotAccess = async ( options?: Parameters<typeof customFetch>[1]): Promise<PilotAccessStatus> => {
+
+  return customFetch<PilotAccessStatus>(getEndPilotAccessUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getEndPilotAccessMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof endPilotAccess>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof endPilotAccess>>, TError,void, TContext> => {
+
+const mutationKey = ['endPilotAccess'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof endPilotAccess>>, void> = () => {
+
+
+          return  endPilotAccess(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type EndPilotAccessMutationResult = NonNullable<Awaited<ReturnType<typeof endPilotAccess>>>
+
+    export type EndPilotAccessMutationError = ErrorType<unknown>
+
+    /**
+ * @summary End the current pilot session
+ */
+export const useEndPilotAccess = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof endPilotAccess>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof endPilotAccess>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getEndPilotAccessMutationOptions(options));
+    }
 
 export const getGetDashboardUrl = () => {
 

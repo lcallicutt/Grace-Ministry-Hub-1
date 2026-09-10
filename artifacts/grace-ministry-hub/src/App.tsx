@@ -17,6 +17,7 @@ import ConversationPage from '@/pages/conversation';
 import ServiceBuilderPage from '@/pages/service-builder';
 import ServicePlanPage from '@/pages/service-plan';
 import ChurchProfilePage from '@/pages/church-profile';
+import { PilotAccess } from '@/components/pilot-access';
 
 const queryClient = new QueryClient();
 
@@ -47,7 +48,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-          <Router />
+          <PilotAccess>
+            <Router />
+          </PilotAccess>
         </WouterRouter>
         <Toaster />
       </TooltipProvider>

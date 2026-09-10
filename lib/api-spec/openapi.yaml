@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: pilot
+    description: Private pilot access
   - name: dashboard
     description: Ministry workspace overview
   - name: profile
@@ -32,6 +34,52 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /pilot/status:
+    get:
+      operationId: getPilotAccessStatus
+      tags: [pilot]
+      summary: Check pilot access
+      responses:
+        "200":
+          description: Current pilot access status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PilotAccessStatus"
+  /pilot/login:
+    post:
+      operationId: startPilotAccess
+      tags: [pilot]
+      summary: Unlock the private pilot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PilotAccessCredentials"
+      responses:
+        "200":
+          description: Pilot access granted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PilotAccessStatus"
+        "401":
+          description: Invalid pilot password
+        "429":
+          description: Too many login attempts
+  /pilot/logout:
+    post:
+      operationId: endPilotAccess
+      tags: [pilot]
+      summary: End the current pilot session
+      responses:
+        "200":
+          description: Pilot session ended
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PilotAccessStatus"
   /dashboard:
     get:
       operationId: getDashboard
@@ -203,6 +251,20 @@ components:
       schema:
         type: integer
   schemas:
+    PilotAccessStatus:
+      type: object
+      required: [authenticated]
+      properties:
+        authenticated:
+          type: boolean
+    PilotAccessCredentials:
+      type: object
+      required: [password]
+      properties:
+        password:
+          type: string
+          minLength: 1
+          maxLength: 256
     HealthStatus:
       type: object
       properties:

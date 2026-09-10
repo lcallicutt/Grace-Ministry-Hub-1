@@ -3,14 +3,27 @@ import { MessageSquare, LayoutList, Building2, PanelLeftClose, PanelLeftOpen } f
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useGetChurchProfile } from "@workspace/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  useEndPilotAccess,
+  useGetChurchProfile,
+} from "@workspace/api-client-react";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
   const [desktopNavigationExpanded, setDesktopNavigationExpanded] = useState(true);
+  const queryClient = useQueryClient();
   const isMobile = useIsMobile();
   const { data: profile } = useGetChurchProfile();
+  const endPilotAccess = useEndPilotAccess({
+    mutation: {
+      onSuccess: () => {
+        queryClient.clear();
+        window.location.reload();
+      },
+    },
+  });
   const sidebarOpen = isMobile ? mobileNavigationOpen : desktopNavigationExpanded;
 
   const navItems = [
@@ -98,6 +111,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 bg-background overflow-hidden relative">
+        <div className="shrink-0 border-b border-accent bg-accent/45 px-4 py-2 text-xs font-medium text-accent-foreground">
+          <div className="mx-auto flex max-w-5xl items-center justify-center gap-3">
+            <span className="text-center">
+              Complimentary 30-day pilot · Access and AI usage are manually managed during the pilot period.
+            </span>
+            <button
+              type="button"
+              className="shrink-0 underline underline-offset-2 hover:no-underline disabled:opacity-60"
+              onClick={() => endPilotAccess.mutate()}
+              disabled={endPilotAccess.isPending}
+            >
+              End session
+            </button>
+          </div>
+        </div>
         <header className="h-16 md:hidden flex items-center px-4 border-b bg-background/80 backdrop-blur-sm z-10 shrink-0">
           <button 
             onClick={() => setMobileNavigationOpen(true)}

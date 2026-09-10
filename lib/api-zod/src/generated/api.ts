@@ -18,6 +18,38 @@ export const HealthCheckResponse = zod.object({
 
 
 /**
+ * @summary Check pilot access
+ */
+export const GetPilotAccessStatusResponse = zod.object({
+  "authenticated": zod.boolean()
+})
+
+
+/**
+ * @summary Unlock the private pilot
+ */
+export const startPilotAccessBodyPasswordMax = 256;
+
+
+
+export const StartPilotAccessBody = zod.object({
+  "password": zod.string().min(1).max(startPilotAccessBodyPasswordMax)
+})
+
+export const StartPilotAccessResponse = zod.object({
+  "authenticated": zod.boolean()
+})
+
+
+/**
+ * @summary End the current pilot session
+ */
+export const EndPilotAccessResponse = zod.object({
+  "authenticated": zod.boolean()
+})
+
+
+/**
  * @summary Get the ministry workspace overview
  */
 export const GetDashboardResponse = zod.object({

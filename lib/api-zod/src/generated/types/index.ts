@@ -17,6 +17,8 @@ export * from './message';
 export * from './messageInput';
 export * from './messagePair';
 export * from './messageRole';
+export * from './pilotAccessCredentials';
+export * from './pilotAccessStatus';
 export * from './serviceOutputs';
 export * from './servicePlan';
 export * from './servicePlanDetail';
