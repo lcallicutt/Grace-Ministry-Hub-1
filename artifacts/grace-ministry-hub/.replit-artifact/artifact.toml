@@ -20,7 +20,19 @@ serve = "static"
 publicDir = "artifacts/grace-ministry-hub/dist/public"
 
 [[services.production.rewrites]]
-from = "/*"
+from = "/conversations/*"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/service-builder"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/service-builder/*"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/church-profile"
 to = "/index.html"
 
 [services.env]
