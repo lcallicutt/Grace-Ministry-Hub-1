@@ -163,7 +163,7 @@ export async function generateClaudeText(options: {
   system: string;
   messages: ClaudeMessage[];
 }): Promise<string> {
-  const apiKey = process.env.Grace_Pilot_GEC;
+  const apiKey = process.env.Grace_GEC_Piolot;
   if (!apiKey) {
     throw new Error("Anthropic API key is not configured");
   }
