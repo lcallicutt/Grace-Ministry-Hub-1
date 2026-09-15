@@ -37,7 +37,7 @@ function iso(value: Date): string {
   return value.toISOString();
 }
 
-async function ensureChurchProfile() {
+export async function ensureChurchProfile() {
   const [existing] = await db.select().from(churchProfilesTable).limit(1);
   if (existing) return existing;
 

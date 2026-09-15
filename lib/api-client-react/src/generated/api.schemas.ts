@@ -58,6 +58,123 @@ export interface ChurchProfileUpdate {
   welcomeNote?: string;
 }
 
+export type VolunteerStatus = typeof VolunteerStatus[keyof typeof VolunteerStatus];
+
+
+export const VolunteerStatus = {
+  active: 'active',
+  inactive: 'inactive',
+} as const;
+
+export interface Volunteer {
+  id: number;
+  firstName: string;
+  lastName: string;
+  /** @nullable */
+  email: string | null;
+  /** @nullable */
+  phone: string | null;
+  /** @nullable */
+  team: string | null;
+  status: VolunteerStatus;
+  isStudent: boolean;
+  /** @nullable */
+  schoolName: string | null;
+  /** @nullable */
+  guardianName: string | null;
+  /** @nullable */
+  guardianPhone: string | null;
+  /** @nullable */
+  guardianEmail: string | null;
+  /** @nullable */
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type VolunteerInputStatus = typeof VolunteerInputStatus[keyof typeof VolunteerInputStatus];
+
+
+export const VolunteerInputStatus = {
+  active: 'active',
+  inactive: 'inactive',
+} as const;
+
+export interface VolunteerInput {
+  /** @minLength 1 */
+  firstName: string;
+  /** @minLength 1 */
+  lastName: string;
+  /** @nullable */
+  email?: string | null;
+  /** @nullable */
+  phone?: string | null;
+  /** @nullable */
+  team?: string | null;
+  status: VolunteerInputStatus;
+  isStudent: boolean;
+  /** @nullable */
+  schoolName?: string | null;
+  /** @nullable */
+  guardianName?: string | null;
+  /** @nullable */
+  guardianPhone?: string | null;
+  /** @nullable */
+  guardianEmail?: string | null;
+  /** @nullable */
+  notes?: string | null;
+}
+
+export type VolunteerUpdate = VolunteerInput;
+
+export type VolunteerUpcomingSignupStatus = typeof VolunteerUpcomingSignupStatus[keyof typeof VolunteerUpcomingSignupStatus];
+
+
+export const VolunteerUpcomingSignupStatus = {
+  confirmed: 'confirmed',
+  waitlisted: 'waitlisted',
+  cancelled: 'cancelled',
+  no_show: 'no_show',
+} as const;
+
+export interface VolunteerUpcomingSignup {
+  id: number;
+  slotTitle: string;
+  date: string;
+  startTime: string;
+  status: VolunteerUpcomingSignupStatus;
+}
+
+export type VolunteerDetail = Volunteer & {
+  upcomingSignups: VolunteerUpcomingSignup[];
+  totalApprovedHours: number;
+};
+
+export interface VolunteerImportRow {
+  /** @minLength 1 */
+  firstName: string;
+  /** @minLength 1 */
+  lastName: string;
+  /** @nullable */
+  email?: string | null;
+  /** @nullable */
+  phone?: string | null;
+  /** @nullable */
+  team?: string | null;
+}
+
+export interface VolunteerImportInput {
+  /**
+     * @minItems 1
+     * @maxItems 500
+     */
+  volunteers: VolunteerImportRow[];
+}
+
+export interface VolunteerImportResult {
+  imported: number;
+}
+
 export interface ConversationInput {
   /** @minLength 1 */
   title: string;

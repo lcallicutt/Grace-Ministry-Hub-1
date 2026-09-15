@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { MessageSquare, LayoutList, Building2, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { MessageSquare, LayoutList, Building2, PanelLeftClose, PanelLeftOpen, Users } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -29,6 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const navItems = [
     { href: "/", label: "Workspace", icon: MessageSquare },
     { href: "/service-builder", label: "Service Builder", icon: LayoutList },
+    { href: "/volunteers", label: "Volunteers", icon: Users },
     { href: "/church-profile", label: "Church Profile", icon: Building2 },
   ];
 

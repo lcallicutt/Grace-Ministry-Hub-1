@@ -17,6 +17,7 @@ import ConversationPage from '@/pages/conversation';
 import ServiceBuilderPage from '@/pages/service-builder';
 import ServicePlanPage from '@/pages/service-plan';
 import ChurchProfilePage from '@/pages/church-profile';
+import VolunteersPage from '@/pages/volunteers';
 import { PilotAccess } from '@/components/pilot-access';
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ function Router() {
           <Route path="/conversations/:id" component={ConversationPage} />
           <Route path="/service-builder" component={ServiceBuilderPage} />
           <Route path="/service-builder/:id" component={ServicePlanPage} />
+          <Route path="/volunteers" component={VolunteersPage} />
           <Route path="/church-profile" component={ChurchProfilePage} />
           <Route component={NotFound} />
         </Switch>

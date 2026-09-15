@@ -20,6 +20,8 @@ tags:
     description: Grace conversations and assistant messages
   - name: services
     description: Weekly service builder operations
+  - name: volunteers
+    description: Volunteer roster operations
 paths:
   /healthz:
     get:
@@ -121,6 +123,92 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ChurchProfile"
+  /volunteers:
+    get:
+      operationId: getVolunteers
+      tags: [volunteers]
+      summary: List volunteers in the current church
+      responses:
+        "200":
+          description: Volunteer roster
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Volunteer"
+    post:
+      operationId: createVolunteer
+      tags: [volunteers]
+      summary: Add a volunteer to the current church
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VolunteerInput"
+      responses:
+        "201":
+          description: Created volunteer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Volunteer"
+  /volunteers/import:
+    post:
+      operationId: importVolunteers
+      tags: [volunteers]
+      summary: Import volunteers into the current church
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VolunteerImportInput"
+      responses:
+        "201":
+          description: Imported volunteers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VolunteerImportResult"
+  /volunteers/{volunteerId}:
+    get:
+      operationId: getVolunteer
+      tags: [volunteers]
+      summary: Get volunteer details in the current church
+      parameters:
+        - $ref: "#/components/parameters/VolunteerId"
+      responses:
+        "200":
+          description: Volunteer detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VolunteerDetail"
+        "404":
+          description: Volunteer not found
+    patch:
+      operationId: updateVolunteer
+      tags: [volunteers]
+      summary: Update a volunteer in the current church
+      parameters:
+        - $ref: "#/components/parameters/VolunteerId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VolunteerUpdate"
+      responses:
+        "200":
+          description: Updated volunteer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Volunteer"
+        "404":
+          description: Volunteer not found
   /conversations:
     get:
       operationId: getConversations
@@ -250,6 +338,12 @@ components:
       required: true
       schema:
         type: integer
+    VolunteerId:
+      name: volunteerId
+      in: path
+      required: true
+      schema:
+        type: integer
   schemas:
     PilotAccessStatus:
       type: object
@@ -319,6 +413,133 @@ components:
           type: string
         welcomeNote:
           type: string
+    Volunteer:
+      type: object
+      required: [id, firstName, lastName, email, phone, team, status, isStudent, schoolName, guardianName, guardianPhone, guardianEmail, notes, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        team:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [active, inactive]
+        isStudent:
+          type: boolean
+        schoolName:
+          type: ["string", "null"]
+        guardianName:
+          type: ["string", "null"]
+        guardianPhone:
+          type: ["string", "null"]
+        guardianEmail:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    VolunteerInput:
+      type: object
+      required: [firstName, lastName, status, isStudent]
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+        lastName:
+          type: string
+          minLength: 1
+        email:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        team:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [active, inactive]
+        isStudent:
+          type: boolean
+        schoolName:
+          type: ["string", "null"]
+        guardianName:
+          type: ["string", "null"]
+        guardianPhone:
+          type: ["string", "null"]
+        guardianEmail:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+    VolunteerUpdate:
+      $ref: "#/components/schemas/VolunteerInput"
+    VolunteerDetail:
+      allOf:
+        - $ref: "#/components/schemas/Volunteer"
+        - type: object
+          required: [upcomingSignups, totalApprovedHours]
+          properties:
+            upcomingSignups:
+              type: array
+              items:
+                $ref: "#/components/schemas/VolunteerUpcomingSignup"
+            totalApprovedHours:
+              type: number
+    VolunteerUpcomingSignup:
+      type: object
+      required: [id, slotTitle, date, startTime, status]
+      properties:
+        id:
+          type: integer
+        slotTitle:
+          type: string
+        date:
+          type: string
+        startTime:
+          type: string
+        status:
+          type: string
+          enum: [confirmed, waitlisted, cancelled, no_show]
+    VolunteerImportRow:
+      type: object
+      required: [firstName, lastName]
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+        lastName:
+          type: string
+          minLength: 1
+        email:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        team:
+          type: ["string", "null"]
+    VolunteerImportInput:
+      type: object
+      required: [volunteers]
+      properties:
+        volunteers:
+          type: array
+          minItems: 1
+          maxItems: 500
+          items:
+            $ref: "#/components/schemas/VolunteerImportRow"
+    VolunteerImportResult:
+      type: object
+      required: [imported]
+      properties:
+        imported:
+          type: integer
     Conversation:
       type: object
       required: [id, title, preview, category, createdAt, updatedAt, messageCount]

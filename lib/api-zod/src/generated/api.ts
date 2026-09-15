@@ -106,6 +106,174 @@ export const UpdateChurchProfileResponse = zod.object({
 
 
 /**
+ * @summary List volunteers in the current church
+ */
+export const GetVolunteersResponseItem = zod.object({
+  "id": zod.number().int(),
+  "firstName": zod.string(),
+  "lastName": zod.string(),
+  "email": zod.string().nullable(),
+  "phone": zod.string().nullable(),
+  "team": zod.string().nullable(),
+  "status": zod.enum(['active', 'inactive']),
+  "isStudent": zod.boolean(),
+  "schoolName": zod.string().nullable(),
+  "guardianName": zod.string().nullable(),
+  "guardianPhone": zod.string().nullable(),
+  "guardianEmail": zod.string().nullable(),
+  "notes": zod.string().nullable(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+export const GetVolunteersResponse = zod.array(GetVolunteersResponseItem)
+
+
+/**
+ * @summary Add a volunteer to the current church
+ */
+
+
+
+
+export const CreateVolunteerBody = zod.object({
+  "firstName": zod.string().min(1),
+  "lastName": zod.string().min(1),
+  "email": zod.string().nullish(),
+  "phone": zod.string().nullish(),
+  "team": zod.string().nullish(),
+  "status": zod.enum(['active', 'inactive']),
+  "isStudent": zod.boolean(),
+  "schoolName": zod.string().nullish(),
+  "guardianName": zod.string().nullish(),
+  "guardianPhone": zod.string().nullish(),
+  "guardianEmail": zod.string().nullish(),
+  "notes": zod.string().nullish()
+})
+
+export const CreateVolunteerResponse = zod.object({
+  "id": zod.number().int(),
+  "firstName": zod.string(),
+  "lastName": zod.string(),
+  "email": zod.string().nullable(),
+  "phone": zod.string().nullable(),
+  "team": zod.string().nullable(),
+  "status": zod.enum(['active', 'inactive']),
+  "isStudent": zod.boolean(),
+  "schoolName": zod.string().nullable(),
+  "guardianName": zod.string().nullable(),
+  "guardianPhone": zod.string().nullable(),
+  "guardianEmail": zod.string().nullable(),
+  "notes": zod.string().nullable(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Import volunteers into the current church
+ */
+
+
+export const importVolunteersBodyVolunteersMax = 500;
+
+
+
+export const ImportVolunteersBody = zod.object({
+  "volunteers": zod.array(zod.object({
+  "firstName": zod.string().min(1),
+  "lastName": zod.string().min(1),
+  "email": zod.string().nullish(),
+  "phone": zod.string().nullish(),
+  "team": zod.string().nullish()
+})).min(1).max(importVolunteersBodyVolunteersMax)
+})
+
+export const ImportVolunteersResponse = zod.object({
+  "imported": zod.number().int()
+})
+
+
+/**
+ * @summary Get volunteer details in the current church
+ */
+export const GetVolunteerParams = zod.object({
+  "volunteerId": zod.coerce.number().int()
+})
+
+export const GetVolunteerResponse = zod.object({
+  "id": zod.number().int(),
+  "firstName": zod.string(),
+  "lastName": zod.string(),
+  "email": zod.string().nullable(),
+  "phone": zod.string().nullable(),
+  "team": zod.string().nullable(),
+  "status": zod.enum(['active', 'inactive']),
+  "isStudent": zod.boolean(),
+  "schoolName": zod.string().nullable(),
+  "guardianName": zod.string().nullable(),
+  "guardianPhone": zod.string().nullable(),
+  "guardianEmail": zod.string().nullable(),
+  "notes": zod.string().nullable(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+}).and(zod.object({
+  "upcomingSignups": zod.array(zod.object({
+  "id": zod.number().int(),
+  "slotTitle": zod.string(),
+  "date": zod.string(),
+  "startTime": zod.string(),
+  "status": zod.enum(['confirmed', 'waitlisted', 'cancelled', 'no_show'])
+})),
+  "totalApprovedHours": zod.number()
+}))
+
+
+/**
+ * @summary Update a volunteer in the current church
+ */
+export const UpdateVolunteerParams = zod.object({
+  "volunteerId": zod.coerce.number().int()
+})
+
+
+
+
+
+export const UpdateVolunteerBody = zod.object({
+  "firstName": zod.string().min(1),
+  "lastName": zod.string().min(1),
+  "email": zod.string().nullish(),
+  "phone": zod.string().nullish(),
+  "team": zod.string().nullish(),
+  "status": zod.enum(['active', 'inactive']),
+  "isStudent": zod.boolean(),
+  "schoolName": zod.string().nullish(),
+  "guardianName": zod.string().nullish(),
+  "guardianPhone": zod.string().nullish(),
+  "guardianEmail": zod.string().nullish(),
+  "notes": zod.string().nullish()
+})
+
+export const UpdateVolunteerResponse = zod.object({
+  "id": zod.number().int(),
+  "firstName": zod.string(),
+  "lastName": zod.string(),
+  "email": zod.string().nullable(),
+  "phone": zod.string().nullable(),
+  "team": zod.string().nullable(),
+  "status": zod.enum(['active', 'inactive']),
+  "isStudent": zod.boolean(),
+  "schoolName": zod.string().nullable(),
+  "guardianName": zod.string().nullable(),
+  "guardianPhone": zod.string().nullable(),
+  "guardianEmail": zod.string().nullable(),
+  "notes": zod.string().nullable(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
  * @summary List recent conversations
  */
 export const GetConversationsResponseItem = zod.object({

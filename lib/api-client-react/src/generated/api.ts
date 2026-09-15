@@ -33,7 +33,12 @@ import type {
   PilotAccessStatus,
   ServicePlan,
   ServicePlanDetail,
-  ServicePlanInput
+  ServicePlanInput,
+  Volunteer,
+  VolunteerDetail,
+  VolunteerImportInput,
+  VolunteerImportResult,
+  VolunteerInput
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -583,6 +588,374 @@ export const useUpdateChurchProfile = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getUpdateChurchProfileMutationOptions(options));
+    }
+
+export const getGetVolunteersUrl = () => {
+
+
+
+
+  return `/api/volunteers`
+}
+
+/**
+ * @summary List volunteers in the current church
+ */
+export const getVolunteers = async ( options?: Parameters<typeof customFetch>[1]): Promise<Volunteer[]> => {
+
+  return customFetch<Volunteer[]>(getGetVolunteersUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetVolunteersQueryKey = () => {
+    return [
+    `/api/volunteers`
+    ] as const;
+    }
+
+
+export const getGetVolunteersQueryOptions = <TData = Awaited<ReturnType<typeof getVolunteers>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getVolunteers>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetVolunteersQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getVolunteers>>> = ({ signal }) => getVolunteers({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getVolunteers>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetVolunteersQueryResult = NonNullable<Awaited<ReturnType<typeof getVolunteers>>>
+export type GetVolunteersQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List volunteers in the current church
+ */
+
+export function useGetVolunteers<TData = Awaited<ReturnType<typeof getVolunteers>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getVolunteers>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetVolunteersQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateVolunteerUrl = () => {
+
+
+
+
+  return `/api/volunteers`
+}
+
+/**
+ * @summary Add a volunteer to the current church
+ */
+export const createVolunteer = async (volunteerInput: VolunteerInput, options?: Parameters<typeof customFetch>[1]): Promise<Volunteer> => {
+
+  return customFetch<Volunteer>(getCreateVolunteerUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(volunteerInput)
+  }
+);}
+
+
+
+
+
+export const getCreateVolunteerMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createVolunteer>>, TError,{data: BodyType<VolunteerInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createVolunteer>>, TError,{data: BodyType<VolunteerInput>}, TContext> => {
+
+const mutationKey = ['createVolunteer'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createVolunteer>>, {data: BodyType<VolunteerInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createVolunteer(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateVolunteerMutationResult = NonNullable<Awaited<ReturnType<typeof createVolunteer>>>
+    export type CreateVolunteerMutationBody = BodyType<VolunteerInput>
+    export type CreateVolunteerMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Add a volunteer to the current church
+ */
+export const useCreateVolunteer = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createVolunteer>>, TError,{data: BodyType<VolunteerInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createVolunteer>>,
+        TError,
+        {data: BodyType<VolunteerInput>},
+        TContext
+      > => {
+      return useMutation(getCreateVolunteerMutationOptions(options));
+    }
+
+export const getImportVolunteersUrl = () => {
+
+
+
+
+  return `/api/volunteers/import`
+}
+
+/**
+ * @summary Import volunteers into the current church
+ */
+export const importVolunteers = async (volunteerImportInput: VolunteerImportInput, options?: Parameters<typeof customFetch>[1]): Promise<VolunteerImportResult> => {
+
+  return customFetch<VolunteerImportResult>(getImportVolunteersUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(volunteerImportInput)
+  }
+);}
+
+
+
+
+
+export const getImportVolunteersMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importVolunteers>>, TError,{data: BodyType<VolunteerImportInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof importVolunteers>>, TError,{data: BodyType<VolunteerImportInput>}, TContext> => {
+
+const mutationKey = ['importVolunteers'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof importVolunteers>>, {data: BodyType<VolunteerImportInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  importVolunteers(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ImportVolunteersMutationResult = NonNullable<Awaited<ReturnType<typeof importVolunteers>>>
+    export type ImportVolunteersMutationBody = BodyType<VolunteerImportInput>
+    export type ImportVolunteersMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Import volunteers into the current church
+ */
+export const useImportVolunteers = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importVolunteers>>, TError,{data: BodyType<VolunteerImportInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof importVolunteers>>,
+        TError,
+        {data: BodyType<VolunteerImportInput>},
+        TContext
+      > => {
+      return useMutation(getImportVolunteersMutationOptions(options));
+    }
+
+export const getGetVolunteerUrl = (volunteerId: number,) => {
+
+
+
+
+  return `/api/volunteers/${volunteerId}`
+}
+
+/**
+ * @summary Get volunteer details in the current church
+ */
+export const getVolunteer = async (volunteerId: number, options?: Parameters<typeof customFetch>[1]): Promise<VolunteerDetail> => {
+
+  return customFetch<VolunteerDetail>(getGetVolunteerUrl(volunteerId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetVolunteerQueryKey = (volunteerId: number,) => {
+    return [
+    `/api/volunteers/${volunteerId}`
+    ] as const;
+    }
+
+
+export const getGetVolunteerQueryOptions = <TData = Awaited<ReturnType<typeof getVolunteer>>, TError = ErrorType<void>>(volunteerId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getVolunteer>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetVolunteerQueryKey(volunteerId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getVolunteer>>> = ({ signal }) => getVolunteer(volunteerId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: volunteerId !== null && volunteerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getVolunteer>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetVolunteerQueryResult = NonNullable<Awaited<ReturnType<typeof getVolunteer>>>
+export type GetVolunteerQueryError = ErrorType<void>
+
+
+/**
+ * @summary Get volunteer details in the current church
+ */
+
+export function useGetVolunteer<TData = Awaited<ReturnType<typeof getVolunteer>>, TError = ErrorType<void>>(
+ volunteerId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getVolunteer>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetVolunteerQueryOptions(volunteerId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpdateVolunteerUrl = (volunteerId: number,) => {
+
+
+
+
+  return `/api/volunteers/${volunteerId}`
+}
+
+/**
+ * @summary Update a volunteer in the current church
+ */
+export const updateVolunteer = async (volunteerId: number,
+    volunteerInput: VolunteerInput, options?: Parameters<typeof customFetch>[1]): Promise<Volunteer> => {
+
+  return customFetch<Volunteer>(getUpdateVolunteerUrl(volunteerId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(volunteerInput)
+  }
+);}
+
+
+
+
+
+export const getUpdateVolunteerMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateVolunteer>>, TError,{volunteerId: number;data: BodyType<VolunteerInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateVolunteer>>, TError,{volunteerId: number;data: BodyType<VolunteerInput>}, TContext> => {
+
+const mutationKey = ['updateVolunteer'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateVolunteer>>, {volunteerId: number;data: BodyType<VolunteerInput>}> = (props) => {
+          const {volunteerId,data} = props ?? {};
+
+          return  updateVolunteer(volunteerId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateVolunteerMutationResult = NonNullable<Awaited<ReturnType<typeof updateVolunteer>>>
+    export type UpdateVolunteerMutationBody = BodyType<VolunteerInput>
+    export type UpdateVolunteerMutationError = ErrorType<void>
+
+    /**
+ * @summary Update a volunteer in the current church
+ */
+export const useUpdateVolunteer = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateVolunteer>>, TError,{volunteerId: number;data: BodyType<VolunteerInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateVolunteer>>,
+        TError,
+        {volunteerId: number;data: BodyType<VolunteerInput>},
+        TContext
+      > => {
+      return useMutation(getUpdateVolunteerMutationOptions(options));
     }
 
 export const getGetConversationsUrl = () => {
