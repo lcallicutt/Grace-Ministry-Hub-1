@@ -1,0 +1,132 @@
+# Replit Prompt: Volunteers Module for Grace Ministry Hub
+
+Paste everything below the line into Replit Agent as one message.
+
+---
+
+I am adding a **Volunteers** module to this existing app (Grace Ministry Hub). Do not redesign or restyle anything that already exists. Match the current look exactly: the dark navy sidebar, the serif headings, the rounded white cards, the same button and badge styles used on the Workspace page. Reuse existing components wherever possible.
+
+## Context
+
+Grace is a ministry assistant for churches. It already has per-church workspaces, a Workspace dashboard with Quick Starts and a Ministry Pulse card, a Service Builder, a Church Profile, and a chat assistant. The "Schedule volunteers" Quick Start currently only drafts an email. This module gives that email somewhere to point to and gives the admin a place to track who is serving.
+
+The first church using this is partnering with a local high school, so student volunteers and service hour tracking are first-class requirements, not extras.
+
+## Navigation
+
+Add **Volunteers** to the left sidebar directly under Service Builder, using the same icon style as the other items. The module has four tabs at the top of the page: **Roster**, **Slots**, **Sign-ups**, **Hours**.
+
+## Data model
+
+All records belong to the current church workspace. Every table gets a `church_id` and standard `created_at` / `updated_at` columns. Never show data from another workspace.
+
+**volunteers**
+- id
+- church_id
+- first_name, last_name
+- email, phone
+- team (text, examples: Welcome, Children, Worship, Parking, Hospitality, Tech)
+- status: active | inactive
+- is_student (boolean)
+- school_name (text, only used when is_student is true)
+- guardian_name, guardian_phone, guardian_email (only shown and required when is_student is true)
+- notes (text)
+
+**slots**
+- id
+- church_id
+- title (example: "Sunday 9am Greeters")
+- role (text)
+- date (date)
+- start_time, end_time
+- capacity (integer, how many people needed)
+- location (text, optional)
+- description (text, optional)
+- signup_token (unique random string used in the public sign-up URL)
+- status: open | closed
+
+**signups**
+- id
+- church_id
+- slot_id (foreign key)
+- volunteer_id (foreign key, nullable when a new person signs up from the public link and has not been matched yet)
+- name, email, phone (captured on the public form)
+- status: confirmed | waitlisted | cancelled | no_show
+- checked_in_at (timestamp, nullable)
+
+**hours_log**
+- id
+- church_id
+- volunteer_id
+- slot_id (nullable, hours can be logged without a slot)
+- date
+- hours (decimal, quarter hour increments)
+- description
+- approved (boolean, default false)
+- approved_by (text, name of the supervisor)
+- approved_at (timestamp)
+
+## Screens
+
+### Roster tab
+- Table of volunteers with columns: Name, Team, Phone, Email, Student badge, Status.
+- Search box and filters for Team, Status, and "Students only".
+- "Add volunteer" button opens a form. When "This volunteer is a student" is checked, reveal the school and guardian fields and make guardian name and phone required.
+- Clicking a row opens a detail panel showing contact info, upcoming sign-ups, and total approved hours.
+- "Import CSV" button that accepts a simple file with columns first_name, last_name, email, phone, team. Show a preview and a count before importing.
+- "Export CSV" button that downloads the current filtered list.
+
+### Slots tab
+- Calendar-style list grouped by date, soonest first. Each slot card shows title, role, time, and a fill indicator like "3 of 5 filled" with a small progress bar.
+- "Create slot" form with all slot fields. Include a "Repeat weekly for N weeks" option that generates multiple slots.
+- Each slot has a "Copy sign-up link" button. The link is `/volunteer/signup/{signup_token}` and must work without logging in.
+- Each slot has Open / Close toggle. Closed slots do not accept new sign-ups.
+
+### Sign-ups tab
+- Table of all sign-ups with filters for slot, date range, and status.
+- Inline actions: Confirm, Move to waitlist, Cancel, Mark no-show, Check in.
+- "Check in" sets checked_in_at to now and, if the slot has a start and end time, automatically creates a pending hours_log entry for that duration.
+- When a sign-up comes in from the public form and the email matches an existing volunteer, link it automatically. If not, show a "New person" badge with a one-click "Add to roster" action.
+
+### Hours tab
+- Table of hours_log entries with filters for volunteer, date range, and approval status.
+- "Log hours" button for manual entries.
+- Supervisor approval: an "Approve" button per row and a "Approve all pending" button. Approving records approved_by (prompt for the supervisor's name once per session and remember it) and approved_at.
+- **Student hours report:** a "Student service hours report" button that generates a per-student summary for a chosen date range. Output as both a printable page and a CSV download with columns: Student name, School, Guardian name, Guardian phone, Total approved hours, Number of shifts, Date range, Church name, Supervisor name, Supervisor signature line. Layout the printable version so one student fits on one page with the church name and address from Church Profile in the header and a signature and date line at the bottom. Schools will use this as documentation, so keep it clean and formal.
+
+### Public sign-up page (`/volunteer/signup/{token}`)
+- No login. Shows church name, slot title, role, date, time, location, description, and spots remaining.
+- Form: name, email, phone, and a checkbox "I am a student volunteer" that reveals school name and a guardian name and phone field, required when checked.
+- If the slot is full, put them on the waitlist and say so plainly.
+- After submitting, show a confirmation with the slot details. Do not send email in this version; just record the sign-up.
+- If the slot is closed or the token is invalid, show a friendly message and nothing else.
+
+### Printable sign-in sheet
+- From any slot, a "Print sign-in sheet" button that opens a print-ready page: church name, slot title, date, time, then a table of confirmed sign-ups with columns Name, Time in, Time out, Signature, plus five blank rows for walk-ins.
+
+## Dashboard integration
+
+- On the Workspace page, add a "Volunteers" card to the Ministry Pulse column under Next Service showing: number of open slots this week, number still unfilled, and pending hours awaiting approval. Match the existing card style.
+- Update the "Schedule volunteers" Quick Start so that when Grace drafts the scheduling email, it can list the church's open slots for the requested month and insert the sign-up links directly into the email. Grace should ask which slots to include if there are more than five.
+
+## Rules
+
+- Everything is scoped to the current church workspace. Verify church_id on every query, including the public sign-up route (resolve the token to a slot, then use that slot's church_id).
+- Guardian fields are stored but are never shown on the public confirmation page or the printable sign-in sheet. They appear only in the roster detail and the student hours report.
+- Do not add email sending, Google integrations, or payment features. Exports are CSV and print only.
+- Keep the existing chat assistant, Service Builder, and Church Profile untouched except for the two dashboard integration points above.
+- Use the same database and auth already in the project. Do not introduce a second database.
+- Handle empty states with a short friendly line and a single primary action, in the same tone as the rest of the app.
+
+## Deliver in this order
+
+1. Database tables and migrations.
+2. Roster tab with add, edit, import, export.
+3. Slots tab with create, repeat weekly, copy link, open/close.
+4. Public sign-up page.
+5. Sign-ups tab with actions and check-in.
+6. Hours tab with approval and the student hours report.
+7. Sign-in sheet.
+8. Dashboard card and Quick Start update.
+
+After each step, tell me what was built and stop so I can test before you continue.

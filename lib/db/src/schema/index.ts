@@ -21,3 +21,7 @@ export * from "./church-profiles";
 export * from "./claude-usage";
 export * from "./conversations";
 export * from "./service-plans";
+export * from "./volunteers";
+export * from "./volunteer-slots";
+export * from "./volunteer-signups";
+export * from "./volunteer-hours";
